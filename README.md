@@ -1,7 +1,7 @@
 # Retro 2D Shooter
 
 A simple retro-style 2D shooter game built with Python and Pygame.
-(For installation of the actual game, go to the "Releases" section.
+(For installation of the actual game, go to the "Releases" section.)
 
 ## Requirements
 
@@ -37,3 +37,4 @@ Note: Make sure you have installed the dependencies with `pip install -r require
 - ESC: Pause/Unpause
 
 - Mouse: Click buttons in menus
+
