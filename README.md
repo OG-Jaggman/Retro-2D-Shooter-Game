@@ -1,7 +1,6 @@
 # Retro 2D Shooter
 
 A simple retro-style 2D shooter game built with Python and Pygame.
-(For installation of the actual game, go to the "Releases" section.)
 
 ## Requirements
 
@@ -10,16 +9,23 @@ A simple retro-style 2D shooter game built with Python and Pygame.
 
 ## Installation
 
-1. Install dependencies:
+1. Clone or download the repository.
+2. Create a virtual environment in the project folder:
    ```
-   pip install -r requirements.txt
+   python -m venv .venv
    ```
+3. Install dependencies:
+   - Double-click `install_requirements.bat` to install the required packages into the virtual environment, or run:
+     ```
+     .venv\Scripts\activate
+     pip install -r requirements.txt
+     ```
 
 ## Running the Game
 
-Double-click `run_game.bat` to start the game, or run `python main.py` from the command line.
+Double-click `run_game.bat` to start the game, or activate the virtual environment and run `python main.py` from the command line.
 
-Note: Make sure you have installed the dependencies with `pip install -r requirements.txt` first.
+Note: The batch files handle activating the virtual environment automatically.
 
 ## Features
 
@@ -35,6 +41,4 @@ Note: Make sure you have installed the dependencies with `pip install -r require
 - Movement: Arrow keys or WASD (A=left, D=right)
 - Shoot: Space or Left mouse click
 - ESC: Pause/Unpause
-
 - Mouse: Click buttons in menus
-
