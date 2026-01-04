@@ -1,0 +1,7 @@
+Game Credits:
+
+Developed by: OG_Jaggman
+Using: Python and Pygame
+Polished by: GitHub Copilot
+
+Special thanks to the Pygame community.
