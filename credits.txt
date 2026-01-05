@@ -5,4 +5,4 @@ Using: Python and Pygame
 Polished by: GitHub Copilot
 
 Special thanks to the Pygame community.
-Also, hello from the creator :)
+Also, hello from the creator
