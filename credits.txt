@@ -3,5 +3,6 @@ Game Credits:
 Developed by: OG_Jaggman
 Using: Python and Pygame
 Polished by: GitHub Copilot
+Support: Anistasia (A.K.A my girlfriend)
 
 Special thanks to the Pygame community.
