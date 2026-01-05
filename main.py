@@ -233,7 +233,8 @@ current_screen = 'menu'
 start_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 200, 200, 50)
 directions_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 270, 200, 50)
 credits_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 340, 200, 50)
-toggle_rect = pygame.Rect(SCREEN_WIDTH // 2 - 125, 410, 250, 50)
+update_log_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 410, 200, 50)
+toggle_rect = pygame.Rect(SCREEN_WIDTH // 2 - 125, 480, 250, 50)
 back_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 
 # Load texts
@@ -241,6 +242,8 @@ with open('directions.txt', 'r') as f:
     directions_text = f.read()
 with open('credits.txt', 'r') as f:
     credits_text = f.read()
+with open('Update Log.txt', 'r') as f:
+    update_log_text = f.read()
 
 # Main loop
 running = True
@@ -251,6 +254,7 @@ while running:
         start_text = font.render("Start Game", True, WHITE)
         directions_text_menu = font.render("Directions", True, WHITE)
         credits_text_menu = font.render("Game Credits", True, WHITE)
+        update_log_text_menu = font.render("Update Log", True, WHITE)
         toggle_text = font.render("Toggle Fullscreen", True, WHITE)
         screen.blit(title_text, (SCREEN_WIDTH // 2 - 150, 100))
         pygame.draw.rect(screen, WHITE, start_rect, 2)
@@ -259,6 +263,8 @@ while running:
         screen.blit(directions_text_menu, directions_text_menu.get_rect(center=directions_rect.center))
         pygame.draw.rect(screen, WHITE, credits_rect, 2)
         screen.blit(credits_text_menu, credits_text_menu.get_rect(center=credits_rect.center))
+        pygame.draw.rect(screen, WHITE, update_log_rect, 2)
+        screen.blit(update_log_text_menu, update_log_text_menu.get_rect(center=update_log_rect.center))
         pygame.draw.rect(screen, WHITE, toggle_rect, 2)
         screen.blit(toggle_text, toggle_text.get_rect(center=toggle_rect.center))
         pygame.display.flip()
@@ -273,6 +279,8 @@ while running:
                     current_screen = 'directions'
                 elif credits_rect.collidepoint(event.pos):
                     current_screen = 'credits'
+                elif update_log_rect.collidepoint(event.pos):
+                    current_screen = 'update_log'
                 elif toggle_rect.collidepoint(event.pos):
                     is_fullscreen = not is_fullscreen
                     if is_fullscreen:
@@ -303,6 +311,25 @@ while running:
         screen.fill(BLACK)
         y = 50
         for line in credits_text.split('\n'):
+            line_text = small_font.render(line, True, WHITE)
+            screen.blit(line_text, (50, y))
+            y += 30
+        back_text = font.render("Back", True, WHITE)
+        pygame.draw.rect(screen, WHITE, back_rect, 2)
+        screen.blit(back_text, back_text.get_rect(center=back_rect.center))
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if back_rect.collidepoint(event.pos):
+                    current_screen = 'menu'
+
+    elif current_screen == 'update_log':
+        screen.fill(BLACK)
+        y = 50
+        for line in update_log_text.split('\n'):
             line_text = small_font.render(line, True, WHITE)
             screen.blit(line_text, (50, y))
             y += 30
