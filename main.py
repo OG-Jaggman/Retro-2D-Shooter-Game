@@ -17,6 +17,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+YELLOW = (255, 255, 0)
 
 # Clock for controlling frame rate
 clock = pygame.time.Clock()
@@ -89,8 +90,9 @@ try:
 except FileNotFoundError:
     highscore = 0
 
-def run_game():
+def run_game(mode):
     global highscore
+    insert_count = 0  # For cheat code
     while True:  # Loop for retries
         # Initialize game state
         all_sprites = pygame.sprite.Group()
@@ -122,6 +124,12 @@ def run_game():
                         bullets.add(bullet)
                     elif event.key == pygame.K_ESCAPE:
                         paused = not paused
+                    elif event.key == pygame.K_INSERT and mode == 'normal':
+                        insert_count += 1
+                        if insert_count == 5:
+                            score = 1000
+                            if mode == 'normal' and score >= 1000:
+                                running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and not paused:
                     if event.button == 1:  # left click
                         bullet = player.shoot()
@@ -153,6 +161,8 @@ def run_game():
                     score += 10
                     if score > highscore:
                         highscore = score
+                    if mode == 'normal' and score >= 1000:
+                        running = False
 
                 # Check if enemy hits player
                 if pygame.sprite.spritecollideany(player, enemies):
@@ -189,6 +199,10 @@ def run_game():
 
             # Cap the frame rate
             clock.tick(FPS)
+
+        # Check if normal mode completed
+        if mode == 'normal' and score >= 1000:
+            return 'star_wars_credits'
 
         # Save high score
         with open('highscore.txt', 'w') as f:
@@ -237,11 +251,18 @@ update_log_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 410, 200, 50)
 toggle_rect = pygame.Rect(SCREEN_WIDTH // 2 - 125, 480, 250, 50)
 back_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 
+# Game mode select rects
+normal_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 200, 200, 50)
+endless_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 270, 200, 50)
+
 # Credits section variable
 credit_section = None
 
 # Directions section variable
 directions_section = None
+
+# Star wars credits offset
+star_wars_offset = 0
 
 # Load texts
 with open('directions.txt', 'r') as f:
@@ -250,6 +271,9 @@ with open('credits.txt', 'r') as f:
     credits_text = f.read()
 with open('Update Log.txt', 'r') as f:
     update_log_text = f.read()
+
+# Prepare star wars credits text
+star_wars_text = "Congratulations!\n\nYou have successfully completed Normal Mode by reaching a score of 1000!\n\n" + credits_text.replace('##', '').strip()
 
 # Parse credits sections
 credits_sections = []
@@ -316,7 +340,7 @@ while running:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if start_rect.collidepoint(event.pos):
-                    current_screen = 'game'
+                    current_screen = 'game_mode_select'
                 elif directions_rect.collidepoint(event.pos):
                     current_screen = 'directions'
                 elif credits_rect.collidepoint(event.pos):
@@ -443,12 +467,69 @@ while running:
                 if back_rect.collidepoint(event.pos):
                     current_screen = 'menu'
 
-    elif current_screen == 'game':
-        result = run_game()
+    elif current_screen == 'game_mode_select':
+        screen.fill(BLACK)
+        title_text = font.render("Select Game Mode", True, WHITE)
+        normal_text = font.render("Normal Mode", True, WHITE)
+        endless_text = font.render("Endless Mode", True, WHITE)
+        screen.blit(title_text, (SCREEN_WIDTH // 2 - 100, 100))
+        pygame.draw.rect(screen, WHITE, normal_rect, 2)
+        screen.blit(normal_text, normal_text.get_rect(center=normal_rect.center))
+        pygame.draw.rect(screen, WHITE, endless_rect, 2)
+        screen.blit(endless_text, endless_text.get_rect(center=endless_rect.center))
+        back_text = font.render("Back", True, WHITE)
+        pygame.draw.rect(screen, WHITE, back_rect, 2)
+        screen.blit(back_text, back_text.get_rect(center=back_rect.center))
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if normal_rect.collidepoint(event.pos):
+                    current_screen = 'game_normal'
+                elif endless_rect.collidepoint(event.pos):
+                    current_screen = 'game_endless'
+                elif back_rect.collidepoint(event.pos):
+                    current_screen = 'menu'
+
+    elif current_screen == 'game_normal':
+        result = run_game('normal')
+        if result == 'quit':
+            running = False
+        elif result == 'star_wars_credits':
+            star_wars_offset = 0
+            current_screen = 'star_wars_credits'
+        else:
+            current_screen = result
+
+    elif current_screen == 'game_endless':
+        result = run_game('endless')
         if result == 'quit':
             running = False
         else:
             current_screen = result
+
+    elif current_screen == 'star_wars_credits':
+        screen.fill(BLACK)
+        lines = star_wars_text.split('\n')
+        for i, line in enumerate(lines):
+            if line.strip():
+                text_surf = small_font.render(line, True, YELLOW)
+                y_pos = SCREEN_HEIGHT + i * 30 - star_wars_offset
+                if 0 < y_pos < SCREEN_HEIGHT:
+                    screen.blit(text_surf, (SCREEN_WIDTH // 2 - text_surf.get_width() // 2, y_pos))
+        star_wars_offset += 0.05
+        if star_wars_offset > len(lines) * 30 + SCREEN_HEIGHT:
+            current_screen = 'menu'
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    current_screen = 'menu'
 
 # Quit Pygame
 pygame.quit()
