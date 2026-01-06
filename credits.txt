@@ -1,8 +1,14 @@
 Game Credits:
 
-Developed by: OG_Jaggman
-Using: Python and Pygame
-Polished by: GitHub Copilot
-Support: Anistasia (A.K.A my girlfriend)
+##Developed by
+OG_Jaggman
 
-Special thanks to the Pygame community.
+##Made with
+Python, Pygame, and Visual Studio Code
+
+##Support
+Anistasia
+
+##Special Thanks
+Special thanks to the Pygame community, Python, and Visual Studio Code for making this possible!
+Also a special thanks to everybody who believed in me :)

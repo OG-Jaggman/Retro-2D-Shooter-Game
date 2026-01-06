@@ -237,6 +237,12 @@ update_log_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 410, 200, 50)
 toggle_rect = pygame.Rect(SCREEN_WIDTH // 2 - 125, 480, 250, 50)
 back_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 
+# Credits section variable
+credit_section = None
+
+# Directions section variable
+directions_section = None
+
 # Load texts
 with open('directions.txt', 'r') as f:
     directions_text = f.read()
@@ -244,6 +250,42 @@ with open('credits.txt', 'r') as f:
     credits_text = f.read()
 with open('Update Log.txt', 'r') as f:
     update_log_text = f.read()
+
+# Parse credits sections
+credits_sections = []
+with open('credits.txt', 'r') as f:
+    lines = f.readlines()
+current_section = None
+current_content = []
+for line in lines:
+    line = line.strip()
+    if line.startswith('##'):
+        if current_section:
+            credits_sections.append((current_section, '\n'.join(current_content)))
+        current_section = line[2:].strip()  # Remove ##
+        current_content = []
+    elif current_section:
+        current_content.append(line)
+if current_section:
+    credits_sections.append((current_section, '\n'.join(current_content)))
+
+# Parse directions sections
+directions_sections = []
+with open('directions.txt', 'r') as f:
+    lines = f.readlines()
+current_section = None
+current_content = []
+for line in lines:
+    line = line.strip()
+    if line.startswith('##'):
+        if current_section:
+            directions_sections.append((current_section, '\n'.join(current_content)))
+        current_section = line[2:].strip()
+        current_content = []
+    elif current_section:
+        current_content.append(line)
+if current_section:
+    directions_sections.append((current_section, '\n'.join(current_content)))
 
 # Main loop
 running = True
@@ -290,41 +332,97 @@ while running:
 
     elif current_screen == 'directions':
         screen.fill(BLACK)
-        y = 50
-        for line in directions_text.split('\n'):
-            line_text = small_font.render(line, True, WHITE)
-            screen.blit(line_text, (50, y))
-            y += 30
-        back_text = font.render("Back", True, WHITE)
-        pygame.draw.rect(screen, WHITE, back_rect, 2)
-        screen.blit(back_text, back_text.get_rect(center=back_rect.center))
+        if directions_section is None:
+            # Draw directions menu buttons dynamically
+            button_rects = []
+            for i, (title, _) in enumerate(directions_sections):
+                text_render = font.render(title, True, WHITE)
+                rect_width = text_render.get_width() + 40  # Add padding
+                rect = pygame.Rect(SCREEN_WIDTH // 2 - rect_width // 2, 200 + i * 70, rect_width, 50)
+                button_rects.append(rect)
+                pygame.draw.rect(screen, WHITE, rect, 2)
+                screen.blit(text_render, text_render.get_rect(center=rect.center))
+            # Back to main menu
+            back_text = font.render("Back", True, WHITE)
+            pygame.draw.rect(screen, WHITE, back_rect, 2)
+            screen.blit(back_text, back_text.get_rect(center=back_rect.center))
+        else:
+            # Display the selected direction
+            for title, content in directions_sections:
+                if title == directions_section:
+                    y = 200
+                    for line in content.split('\n'):
+                        if line.strip():
+                            line_render = small_font.render(line, True, WHITE)
+                            screen.blit(line_render, (SCREEN_WIDTH // 2 - line_render.get_width() // 2, y))
+                            y += 30
+                    break
+            back_text = font.render("Back", True, WHITE)
+            pygame.draw.rect(screen, WHITE, back_rect, 2)
+            screen.blit(back_text, back_text.get_rect(center=back_rect.center))
         pygame.display.flip()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if back_rect.collidepoint(event.pos):
-                    current_screen = 'menu'
+                if directions_section is None:
+                    for i, (title, _) in enumerate(directions_sections):
+                        if button_rects[i].collidepoint(event.pos):
+                            directions_section = title
+                            break
+                    if back_rect.collidepoint(event.pos):
+                        current_screen = 'menu'
+                else:
+                    if back_rect.collidepoint(event.pos):
+                        directions_section = None
 
     elif current_screen == 'credits':
         screen.fill(BLACK)
-        y = 50
-        for line in credits_text.split('\n'):
-            line_text = small_font.render(line, True, WHITE)
-            screen.blit(line_text, (50, y))
-            y += 30
-        back_text = font.render("Back", True, WHITE)
-        pygame.draw.rect(screen, WHITE, back_rect, 2)
-        screen.blit(back_text, back_text.get_rect(center=back_rect.center))
+        if credit_section is None:
+            # Draw credits menu buttons dynamically
+            button_rects = []
+            for i, (title, _) in enumerate(credits_sections):
+                text_render = font.render(title, True, WHITE)
+                rect_width = text_render.get_width() + 40  # Add padding
+                rect = pygame.Rect(SCREEN_WIDTH // 2 - rect_width // 2, 200 + i * 70, rect_width, 50)
+                button_rects.append(rect)
+                pygame.draw.rect(screen, WHITE, rect, 2)
+                screen.blit(text_render, text_render.get_rect(center=rect.center))
+            # Back to main menu
+            back_text = font.render("Back", True, WHITE)
+            pygame.draw.rect(screen, WHITE, back_rect, 2)
+            screen.blit(back_text, back_text.get_rect(center=back_rect.center))
+        else:
+            # Display the selected credit
+            for title, content in credits_sections:
+                if title == credit_section:
+                    y = 200
+                    for line in content.split('\n'):
+                        if line.strip():
+                            line_render = small_font.render(line, True, WHITE)
+                            screen.blit(line_render, (SCREEN_WIDTH // 2 - line_render.get_width() // 2, y))
+                            y += 30
+                    break
+            back_text = font.render("Back", True, WHITE)
+            pygame.draw.rect(screen, WHITE, back_rect, 2)
+            screen.blit(back_text, back_text.get_rect(center=back_rect.center))
         pygame.display.flip()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if back_rect.collidepoint(event.pos):
-                    current_screen = 'menu'
+                if credit_section is None:
+                    for i, (title, _) in enumerate(credits_sections):
+                        if button_rects[i].collidepoint(event.pos):
+                            credit_section = title
+                            break
+                    if back_rect.collidepoint(event.pos):
+                        current_screen = 'menu'
+                else:
+                    if back_rect.collidepoint(event.pos):
+                        credit_section = None
 
     elif current_screen == 'update_log':
         screen.fill(BLACK)

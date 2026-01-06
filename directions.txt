@@ -1,16 +1,15 @@
 Directions:
 
-
+##Objective/scoring
 - Avoid enemies hitting your ship by shooting bullets at them.
 - Score points by destroying enemies.
 - Game ends when an enemy reaches your ship.
 - Each enemy you hit is worth 10 points.
+Good luck!
 
-Controls:
+##Controls
 - Left arrow/A key: Moves ship to the left.
 - Right arrow/D ley: Moves ship to the right.
 - Space bar/Left click (on mouse): Fires bullets.
 - ESC: Brings up the pause menu where you can then resume the game, give up, or go 
 back to the main menu.
-
-Good luck!
