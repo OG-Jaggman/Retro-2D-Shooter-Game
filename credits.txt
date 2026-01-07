@@ -9,6 +9,7 @@ Python, Pygame, and Visual Studio Code
 ##Support
 Here are the known people that have supported me through this project
 -Anistasia
+-Stanley
 
 ##Special Thanks
 Special thanks to the Pygame community, Python, and Visual Studio Code for making this possible!
