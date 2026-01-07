@@ -7,7 +7,8 @@ OG_Jaggman
 Python, Pygame, and Visual Studio Code
 
 ##Support
-Anistasia
+Here are the known people that have supported me through this project
+-Anistasia
 
 ##Special Thanks
 Special thanks to the Pygame community, Python, and Visual Studio Code for making this possible!
