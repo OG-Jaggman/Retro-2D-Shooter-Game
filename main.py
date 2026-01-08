@@ -1,6 +1,17 @@
 import pygame
 import sys
 import random
+import tkinter as tk
+from tkinter import simpledialog
+
+# Firebase Admin SDK
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+# Initialize Firebase
+cred = credentials.Certificate('serviceAccountKey.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # Initialize Pygame
 pygame.init()
@@ -23,7 +34,36 @@ YELLOW = (255, 255, 0)
 clock = pygame.time.Clock()
 FPS = 60
 
-# Player class
+# Prompt for user email
+def get_user_email():
+    root = tk.Tk()
+    root.withdraw()
+    email = simpledialog.askstring('Login', 'Enter your email for high score tracking:')
+    root.destroy()
+    return email if email else 'guest@example.com'
+
+user_email = get_user_email()
+
+# Load/Save high score from Firestore
+def load_highscore(email):
+    try:
+        doc_ref = db.collection('highscores').document(email)
+        doc = doc_ref.get()
+        if doc.exists:
+            return doc.to_dict().get('score', 0)
+    except Exception as e:
+        print(f"Error loading high score: {e}")
+    return 0
+
+def save_highscore(email, score):
+    try:
+        doc_ref = db.collection('highscores').document(email)
+        doc_ref.set({'score': score, 'email': email})
+    except Exception as e:
+        print(f"Error saving high score: {e}")
+
+# Load initial high score
+highscore = load_highscore(user_email)
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -82,13 +122,6 @@ small_font = pygame.font.SysFont(None, 24)
 
 # Enemy spawn rate
 enemy_spawn_rate = 60  # Spawn every second at 60 FPS
-
-# Load high score
-try:
-    with open('highscore.txt', 'r') as f:
-        highscore = int(f.read().strip())
-except FileNotFoundError:
-    highscore = 0
 
 def run_game(mode):
     global highscore
@@ -204,9 +237,8 @@ def run_game(mode):
         if mode == 'normal' and score >= 1000:
             return 'star_wars_credits'
 
-        # Save high score
-        with open('highscore.txt', 'w') as f:
-            f.write(str(highscore))
+        # Save high score to Firestore
+        save_highscore(user_email, highscore)
 
         # Game over screen
         screen.fill(BLACK)

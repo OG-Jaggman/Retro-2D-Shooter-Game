@@ -1,9 +1,11 @@
 Game Credits:
 
 ##Developed by
+This game has been fully developed by:
 OG_Jaggman
 
 ##Made with
+This game has been developed by these applications:
 Python, Pygame, and Visual Studio Code
 
 ##Support
