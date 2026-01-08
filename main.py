@@ -35,16 +35,52 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # Prompt for user email
+
+# Custom login window with Advanced button
 def get_user_email():
+    result = {'email': None}
+    def show_advanced():
+        main_frame.pack_forget()
+        advanced_frame.pack(fill='both', expand=True)
+    def back_to_main():
+        advanced_frame.pack_forget()
+        main_frame.pack(fill='both', expand=True)
+    def sign_in_guest():
+        result['email'] = 'guest@example.com'
+        root.quit()
+    def login():
+        email = email_entry.get().strip()
+        result['email'] = email if email else None
+        root.quit()
+    def close_game():
+        root.destroy()
+        sys.exit()
     root = tk.Tk()
-    root.withdraw()
-    email = simpledialog.askstring('Login', 'Enter your email for high score tracking:')
+    root.title('Login')
+    root.geometry('400x220')
+    root.resizable(False, False)
+    root.protocol("WM_DELETE_WINDOW", lambda: None)
+    main_frame = tk.Frame(root)
+    main_frame.pack(fill='both', expand=True)
+    tk.Label(main_frame, text="Enter your email for high score tracking:").pack(pady=(20,5))
+    email_entry = tk.Entry(main_frame, width=30)
+    email_entry.pack(pady=5)
+    btn_frame = tk.Frame(main_frame)
+    btn_frame.pack(pady=15)
+    tk.Button(btn_frame, text="Login", width=12, command=login).pack(side='left', padx=10)
+    tk.Button(btn_frame, text="Advanced", width=12, command=show_advanced).pack(side='left', padx=10)
+    tk.Button(btn_frame, text="Close Game", width=12, command=close_game).pack(side='left', padx=10)
+    advanced_frame = tk.Frame(root)
+    tk.Label(advanced_frame, text="About logging in:", font=(None, 12, 'bold')).pack(pady=(20,0))
+    tk.Label(advanced_frame, text="Logging in with your email lets you save your high score to the cloud and access it from any device.", wraplength=350).pack(padx=10, pady=5)
+    tk.Button(advanced_frame, text="Sign in as a guest (won't keep your high score)", command=sign_in_guest).pack(pady=10)
+    tk.Button(advanced_frame, text="Back", command=back_to_main).pack(pady=(0,10))
+    root.mainloop()
     root.destroy()
-    return email if email else 'guest@example.com'
+    return result['email'] if result['email'] else 'guest@example.com'
 
-user_email = get_user_email()
+# Firestore high score functions
 
-# Load/Save high score from Firestore
 def load_highscore(email):
     try:
         doc_ref = db.collection('highscores').document(email)
@@ -62,8 +98,10 @@ def save_highscore(email, score):
     except Exception as e:
         print(f"Error saving high score: {e}")
 
-# Load initial high score
+# Get user email and load high score
+user_email = get_user_email()
 highscore = load_highscore(user_email)
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -562,10 +600,6 @@ while running:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                     current_screen = 'menu'
-
-# Quit Pygame
-pygame.quit()
-sys.exit()
 
 # Quit Pygame
 pygame.quit()

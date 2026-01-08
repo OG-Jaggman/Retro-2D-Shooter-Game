@@ -1,3 +1,5 @@
 -    1/5/2026 - Added update log to track updates
 -    1/6/2026 - MAJOR UPDATE - Added "Normal" mode with Starwors credit scene 
 when you reach score 1000!
+-   1/7/2026 - ANOTHER MAJOR UPDATE! Added a sign-in update to keep track of
+your high score! (We can't see your gmail adress)
