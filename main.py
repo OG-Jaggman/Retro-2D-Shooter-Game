@@ -1,5 +1,22 @@
-import pygame
+import os
 import sys
+
+# Enforce Windows-only support early
+if os.name != "nt":
+    _msg = "Sorry, this game currently only supports Windows."
+    try:
+        import tkinter as _tk
+        from tkinter import messagebox as _messagebox
+        _root = _tk.Tk()
+        _root.withdraw()
+        _messagebox.showerror("Unsupported OS", _msg)
+        _root.destroy()
+    except Exception:
+        pass
+    sys.stderr.write(_msg + "\n")
+    raise SystemExit(1)
+
+import pygame
 import random
 import tkinter as tk
 from tkinter import simpledialog
