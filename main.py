@@ -187,7 +187,7 @@ def run_game(mode):
             # Event handling
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return 'quit'
+                    pass  # Ignore window X button
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and not paused:
                         bullet = player.shoot()
@@ -302,7 +302,7 @@ def run_game(mode):
         while waiting:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return 'quit'
+                    pass  # Ignore window X button
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if retry_rect.collidepoint(event.pos):
                         waiting = False
@@ -319,6 +319,8 @@ directions_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 270, 200, 50)
 credits_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 340, 200, 50)
 update_log_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 410, 200, 50)
 toggle_rect = pygame.Rect(SCREEN_WIDTH // 2 - 125, 480, 250, 50)
+
+exit_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, 550, 200, 50)
 back_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 
 # Game mode select rects
@@ -392,6 +394,7 @@ while running:
         credits_text_menu = font.render("Game Credits", True, WHITE)
         update_log_text_menu = font.render("Update Log", True, WHITE)
         toggle_text = font.render("Toggle Fullscreen", True, WHITE)
+        exit_text = font.render("Exit", True, WHITE)
         screen.blit(title_text, (SCREEN_WIDTH // 2 - 150, 100))
         pygame.draw.rect(screen, WHITE, start_rect, 2)
         screen.blit(start_text, start_text.get_rect(center=start_rect.center))
@@ -403,11 +406,13 @@ while running:
         screen.blit(update_log_text_menu, update_log_text_menu.get_rect(center=update_log_rect.center))
         pygame.draw.rect(screen, WHITE, toggle_rect, 2)
         screen.blit(toggle_text, toggle_text.get_rect(center=toggle_rect.center))
+        pygame.draw.rect(screen, WHITE, exit_rect, 2)
+        screen.blit(exit_text, exit_text.get_rect(center=exit_rect.center))
         pygame.display.flip()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pass  # Ignore window X button
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if start_rect.collidepoint(event.pos):
                     current_screen = 'game_mode_select'
@@ -423,6 +428,9 @@ while running:
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
                     else:
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                elif exit_rect.collidepoint(event.pos):
+                    save_highscore(user_email, highscore)
+                    running = False
 
     elif current_screen == 'directions':
         screen.fill(BLACK)
@@ -458,7 +466,7 @@ while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pass  # Ignore window X button
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if directions_section is None:
                     for i, (title, _) in enumerate(directions_sections):
@@ -505,7 +513,7 @@ while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pass  # Ignore window X button
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if credit_section is None:
                     for i, (title, _) in enumerate(credits_sections):
@@ -532,7 +540,7 @@ while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pass  # Ignore window X button
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if back_rect.collidepoint(event.pos):
                     current_screen = 'menu'
@@ -554,7 +562,7 @@ while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pass  # Ignore window X button
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if normal_rect.collidepoint(event.pos):
                     current_screen = 'game_normal'
@@ -596,7 +604,7 @@ while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pass  # Ignore window X button
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                     current_screen = 'menu'
