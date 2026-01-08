@@ -3,3 +3,5 @@
 when you reach score 1000!
 -   1/7/2026 - ANOTHER MAJOR UPDATE! Added a sign-in update to keep track of
 your high score! (We can't see your gmail adress)
+-   1/8/2026 - Fixed the hish score saver by adding an "Exit" button.
+(The "exit" button is now the only way to exit, and it saves your score.)
