@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 
 # Enforce Windows-only support early
@@ -19,7 +20,7 @@ if os.name != "nt":
 import pygame
 import random
 import tkinter as tk
-from tkinter import simpledialog
+from tkinter import messagebox, simpledialog
 
 # Firebase Admin SDK
 import firebase_admin
@@ -51,11 +52,18 @@ YELLOW = (255, 255, 0)
 clock = pygame.time.Clock()
 FPS = 60
 
+# Email validation
+EMAIL_REGEX = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
+
 # Prompt for user email
 
 # Custom login window with Advanced button
 def get_user_email():
     result = {'email': None}
+
+    def is_email_valid(email: str) -> bool:
+        return bool(EMAIL_REGEX.match(email))
+
     def show_advanced():
         main_frame.pack_forget()
         advanced_frame.pack(fill='both', expand=True)
@@ -66,25 +74,38 @@ def get_user_email():
         result['email'] = 'guest@example.com'
         root.quit()
     def login():
-        email = email_entry.get().strip()
-        result['email'] = email if email else None
+        email = email_var.get().strip()
+        if not is_email_valid(email):
+            messagebox.showerror("Invalid Email", "Please enter a valid, active email address before logging in.")
+            return
+        result['email'] = email
         root.quit()
     def close_game():
         root.destroy()
         sys.exit()
+    def update_login_state(*_):
+        current_email = email_var.get().strip()
+        valid = is_email_valid(current_email)
+        login_btn.config(state='normal' if valid else 'disabled')
+        status_var.set("" if valid else "Enter a valid email to enable Login.")
     root = tk.Tk()
     root.title('Login')
-    root.geometry('400x220')
+    root.geometry('400x250')
     root.resizable(False, False)
     root.protocol("WM_DELETE_WINDOW", lambda: None)
     main_frame = tk.Frame(root)
     main_frame.pack(fill='both', expand=True)
     tk.Label(main_frame, text="Enter your email for high score tracking:").pack(pady=(20,5))
-    email_entry = tk.Entry(main_frame, width=30)
+    email_var = tk.StringVar()
+    email_var.trace_add('write', update_login_state)
+    email_entry = tk.Entry(main_frame, width=30, textvariable=email_var)
     email_entry.pack(pady=5)
+    status_var = tk.StringVar(value="Email required to continue.")
+    tk.Label(main_frame, textvariable=status_var, fg='red').pack()
     btn_frame = tk.Frame(main_frame)
     btn_frame.pack(pady=15)
-    tk.Button(btn_frame, text="Login", width=12, command=login).pack(side='left', padx=10)
+    login_btn = tk.Button(btn_frame, text="Login", width=12, command=login, state='disabled')
+    login_btn.pack(side='left', padx=10)
     tk.Button(btn_frame, text="Advanced", width=12, command=show_advanced).pack(side='left', padx=10)
     tk.Button(btn_frame, text="Close Game", width=12, command=close_game).pack(side='left', padx=10)
     advanced_frame = tk.Frame(root)
