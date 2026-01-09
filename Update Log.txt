@@ -9,3 +9,4 @@ your high score! (We can't see your gmail adress)
 ------------------------------------------------------------------------------
 Upcoming updates:
 -   Adding details to the ships
+-   Adding levels so it gets more challanging
